@@ -15,3 +15,14 @@ export const fetchRepoRequests = async () => {
     throw error;
   }
 }
+
+// Get ReadMe Files
+export const fetchReadMeFiles = async () => {
+  try {
+    const response = await axios.get(`${apiUrl}/api/trigger-readme/`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching readme files:', error);
+    throw error;
+  }
+}
