@@ -16,6 +16,17 @@ export const fetchRepoRequests = async () => {
   }
 }
 
+// Create Repo Request
+export const createRepoRequest = async (url: string) => {
+  try {
+    const response = await axios.post(`${apiUrl}/api/repo/`, { repo_url: url });
+    return response.data;
+  } catch (error) {
+    console.error('Error creating repo request:', error);
+    throw error;
+  }
+}
+
 // Get ReadMe Files
 export const fetchReadMeFiles = async () => {
   try {
@@ -23,6 +34,17 @@ export const fetchReadMeFiles = async () => {
     return response.data;
   } catch (error) {
     console.error('Error fetching readme files:', error);
+    throw error;
+  }
+}
+
+// Create ReadMe File
+export const createReadMeFile = async (repoId: number) => {
+  try {
+    const response = await axios.post(`${apiUrl}/api/trigger-readme/`, { repo_request: repoId });
+    return response.data;
+  } catch (error) {
+    console.error('Error creating readme file:', error);
     throw error;
   }
 }
