@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 import { fetchReadMeFiles, fetchRepoRequests } from '../common/data/apiService';
 import { RepoRequest, ReadMeFile } from "../common/data/datatypes";
 
@@ -58,7 +59,10 @@ const HomePage = () => {
           {readMeFiles.length > 0 ? (
             readMeFiles.map((readme) => (
               <li key={readme.id}>
-                <p>{readme.content}</p>
+                <p>
+                  <ReactMarkdown>
+                    {readme.content}
+                  </ReactMarkdown></p>
               </li>
             ))
           ) : (
