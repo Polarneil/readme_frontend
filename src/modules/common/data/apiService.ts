@@ -1,7 +1,4 @@
 import axios from 'axios';
-import { RepoRequest, ReadMeFile } from './datatypes';
-import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const apiUrl = process.env.REACT_APP_DJANGO_API_URL;
 
@@ -28,9 +25,9 @@ export const createRepoRequest = async (url: string) => {
 }
 
 // Get ReadMe Files
-export const fetchReadMeFiles = async () => {
+export const fetchReadMeFiles = async (key: string) => {
   try {
-    const response = await axios.get(`${apiUrl}/api/trigger-readme/`);
+    const response = await axios.get(`${apiUrl}/api/trigger-readme/?key=${key}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching readme files:', error);

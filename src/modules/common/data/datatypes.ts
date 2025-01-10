@@ -7,6 +7,7 @@ export interface RepoRequest {
 
 export interface ReadMeFile {
   id: number;
+  key: string;
   content: string;
   created_at: string;
   repo_request: number;

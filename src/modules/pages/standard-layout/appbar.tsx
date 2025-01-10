@@ -9,11 +9,19 @@ export default function CustomAppBar() {
       <AppBar
         position="static"
         sx={{
-          background: 'linear-gradient(90deg, #FF8C00, #1E90FF)', // Orange to Blue
+          background: 'black'
         }}
       >
         <Toolbar>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              flexGrow: 1,
+              fontFamily: "'Share Tech Mono', monospace",
+              fontWeight: 700,
+              color: '#23FF12',
+            }}
+          >
             README.ai
           </Typography>
         </Toolbar>

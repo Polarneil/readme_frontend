@@ -1,74 +1,139 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
-import { createRepoRequest, createReadMeFile } from "../common/data/apiService";
-import '../app/app.component.css';
+import { createRepoRequest, createReadMeFile, fetchReadMeFiles } from "../common/data/apiService";
+import CopyIcon from '@mui/icons-material/ContentCopy'; import '../app/app.component.css';
+import BootstrapTooltip from "../common/tooltip";
+
 
 const HomePage = () => {
-  const [newRepoUrl, setNewRepoUrl] = useState<string>(""); // For storing new repo URL
-  const [readMeContent, setReadMeContent] = useState<string | null>(null); // For storing README markdown content
-  const [editorContent, setEditorContent] = useState<string>(""); // For storing raw markdown input from the user
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // For error messages
-  const [isLoading, setIsLoading] = useState<boolean>(false); // For tracking loading state
+  const [newRepoUrl, setNewRepoUrl] = useState<string>("");
+  const [readmeKey, setReadmeKey] = useState<string>("");
+  const [newReadMeKey, setNewReadMeKey] = useState<string>("");
+  const [readMeContent, setReadMeContent] = useState<string | null>(null);
+  const [editorContent, setEditorContent] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showUrlForm, setShowUrlForm] = useState<boolean>(true);
+  const [showForms, setShowForms] = useState<boolean>(true);
+  const [tooltipText, setTooltipText] = useState('Copy');
 
-  // Handle form submission for creating a new repo request and fetching README
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setErrorMessage(null); // Reset error message
-    setReadMeContent(null); // Reset README content
-    setIsLoading(true); // Start loading
+    setErrorMessage(null);
+    setReadMeContent(null);
+    setIsLoading(true);
 
     try {
-      // Create a new repo request
       const newRequest = await createRepoRequest(newRepoUrl);
-
-      // Create the ReadMe file for the newly created repo request
       const readMeFile = await createReadMeFile(newRequest.id);
 
-      // Set the README content from the response
       setReadMeContent(readMeFile.content);
-      setEditorContent(readMeFile.content); // Pre-populate the editor with the received content
-      setNewRepoUrl(""); // Clear the input field
+      setEditorContent(readMeFile.content);
+      setNewReadMeKey(readMeFile.key);
+      setNewRepoUrl("");
+      setShowForms(false);
     } catch (error) {
       console.error("Error creating repo request or README:", error);
       setErrorMessage("Failed to create repo request or generate README. Please try again.");
     } finally {
-      setIsLoading(false); // Stop loading when the request is finished
+      setIsLoading(false);
     }
+  };
+
+  const handleKeySubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMessage(null);
+    setReadMeContent(null);
+    setIsLoading(true);
+
+    try {
+      const newRequest = await fetchReadMeFiles(readmeKey);
+      setReadMeContent(newRequest.content);
+      setEditorContent(newRequest.content);
+      setNewReadMeKey(newRequest.key);
+      setReadmeKey("");
+      setShowForms(false);
+    } catch (error) {
+      console.error("Error fetching README content:", error);
+      setErrorMessage("Error fetching README content. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const copyToClipboard = (code: string) => {
+    navigator.clipboard.writeText(code).then(() => {
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+    });
+    setTooltipText('Copied!');
+
+    setTimeout(() => {
+      setTooltipText('Copy');
+    }, 1500);
   };
 
   return (
     <div className="homepage">
-      <header>
-        <h1>README Generator</h1>
-      </header>
-
-      <section>
-        <h2>Enter GitHub Repo URL</h2>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={newRepoUrl}
-            onChange={(e) => setNewRepoUrl(e.target.value)}
-            placeholder="Enter repo URL"
-            required
-          />
-          <button type="submit">Generate README</button>
-        </form>
-        {errorMessage && <p className="error">{errorMessage}</p>}
-      </section>
+      {readMeContent && (
+        <button onClick={() => setShowForms(!showForms)}>
+          {showForms ? "Hide Input Forms" : "Show Input Forms"}
+        </button>
+      )}
+      {showForms && (
+        <div className="form-container">
+          {showUrlForm ? (
+            <section>
+              <h2>Enter GitHub Repo URL</h2>
+              <form className="form-subcontainer" onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  value={newRepoUrl}
+                  onChange={(e) => setNewRepoUrl(e.target.value)}
+                  placeholder="Enter repo URL"
+                  required
+                />
+                <button type="submit">Generate README</button>
+              </form>
+            </section>
+          ) : (
+            <section>
+              <h2>Enter README Key</h2>
+              <form className="form-subcontainer" onSubmit={handleKeySubmit}>
+                <input
+                  type="text"
+                  value={readmeKey}
+                  onChange={(e) => setReadmeKey(e.target.value)}
+                  placeholder="Enter README Key"
+                  required
+                />
+                <button type="submit">Fetch README</button>
+              </form>
+            </section>
+          )}
+          <p className="or-spacer">OR</p>
+          <button onClick={() => setShowUrlForm(!showUrlForm)}>
+            {showUrlForm ? "Use Key" : "Use URL"}
+          </button>
+          {errorMessage && <p className="error">{errorMessage}</p>}
+        </div>
+      )}
 
       {isLoading && (
-        <section>
-          <div className="spinner"></div> {/* Simple CSS spinner */}
-        </section>
+        <div className="spinner"></div>
       )}
 
       {readMeContent && !isLoading && (
         <section>
-          <h2>Split View - Editor & Preview</h2>
+          <div className="token-box">
+            {newReadMeKey}
+            <BootstrapTooltip title={tooltipText} arrow>
+              <span className="copy-icon"><CopyIcon onClick={() => copyToClipboard(newReadMeKey)} fontSize="small" /></span>
+            </BootstrapTooltip>
+          </div>
           <div className="split-container">
             <div className="editor-container">
-              <h3>Markdown Editor</h3>
               <textarea
                 value={editorContent}
                 onChange={(e) => setEditorContent(e.target.value)}
@@ -77,7 +142,6 @@ const HomePage = () => {
               />
             </div>
             <div className="preview-container">
-              <h3>Markdown Preview</h3>
               <ReactMarkdown>{editorContent}</ReactMarkdown>
             </div>
           </div>
