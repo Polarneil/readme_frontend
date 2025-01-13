@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
-import { createRepoRequest, createReadMeFile, fetchReadMeFiles } from "../common/data/apiService";
-import CopyIcon from '@mui/icons-material/ContentCopy'; import '../app/app.component.css';
+import { createRepoRequest, createReadMeFile, fetchReadMeFiles, updateReadMeFile } from "../common/data/apiService";
+import CopyIcon from '@mui/icons-material/ContentCopy'; 
+import '../app/app.component.css';
 import BootstrapTooltip from "../common/tooltip";
-import { Button } from "@mui/material";
-
 
 const HomePage = () => {
   const [newRepoUrl, setNewRepoUrl] = useState<string>("");
@@ -17,7 +16,12 @@ const HomePage = () => {
   const [showUrlForm, setShowUrlForm] = useState<boolean>(true);
   const [showForms, setShowForms] = useState<boolean>(true);
   const [tooltipText, setTooltipText] = useState('Copy');
+  const [isContentChanged, setIsContentChanged] = useState<boolean>(false);
 
+  useEffect(() => {
+    // Determine if content has changed
+    setIsContentChanged(editorContent !== readMeContent);
+  }, [editorContent, readMeContent]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,6 +62,21 @@ const HomePage = () => {
     } catch (error) {
       console.error("Error fetching README content:", error);
       setErrorMessage("Error fetching README content. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setErrorMessage(null);
+    setIsLoading(true);
+
+    try {
+      const updatedReadMe = await updateReadMeFile(newReadMeKey, editorContent);
+      setReadMeContent(updatedReadMe.content);
+    } catch (error) {
+      console.error("Error updating README content:", error);
+      setErrorMessage("Failed to update README content. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -134,8 +153,24 @@ const HomePage = () => {
                 <span className="copy-icon" onClick={() => copyToClipboard(newReadMeKey)}><CopyIcon fontSize="small" /></span>
               </BootstrapTooltip>
             </div>
-            <div className="save-button">
-              Save
+            <div>
+              <button
+                onClick={handleSave}
+                disabled={!isContentChanged}
+                style={{
+                  cursor: isContentChanged ? 'pointer' : 'not-allowed',
+                  display: 'inline-block',
+                  backgroundColor: '#F6F8FA',
+                  padding: '10px',
+                  borderRadius: '8px',
+                  border: '2px solid #D0D9E0',
+                  boxShadow: '0 4px 12px 0 rgba(0,0,0,0.1)',
+                  marginTop: '15px',
+                  color: isContentChanged ? 'black' : 'gray',
+                }}
+              >
+                Save
+              </button>
             </div>
           </div>
           <div className="split-container">

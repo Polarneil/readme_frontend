@@ -45,3 +45,14 @@ export const createReadMeFile = async (repoId: number) => {
     throw error;
   }
 }
+
+// Update ReadMe File
+export const updateReadMeFile = async (readMeUUID: string, updated_content: string) => {
+  try {
+    const response = await axios.patch(`${apiUrl}/api/trigger-readme/`, { key: readMeUUID, content: updated_content });
+    return response.data;
+  } catch (error) {
+    console.error('Error updating readme file:', error);
+    throw error;
+  }
+}
