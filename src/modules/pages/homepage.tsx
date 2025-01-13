@@ -17,6 +17,7 @@ const HomePage = () => {
   const [showForms, setShowForms] = useState<boolean>(true);
   const [tooltipText, setTooltipText] = useState('Copy');
   const [isContentChanged, setIsContentChanged] = useState<boolean>(false);
+  const [showSaveSuccess, setShowSaveSuccess] = useState(false);
 
   useEffect(() => {
     // Determine if content has changed
@@ -70,10 +71,17 @@ const HomePage = () => {
   const handleSave = async () => {
     setErrorMessage(null);
     setIsLoading(true);
+    setShowSaveSuccess(false);
 
     try {
       const updatedReadMe = await updateReadMeFile(newReadMeKey, editorContent);
       setReadMeContent(updatedReadMe.content);
+      setShowSaveSuccess(true);
+      
+      // Hide success message after 3 seconds
+      setTimeout(() => {
+        setShowSaveSuccess(false);
+      }, 3000);
     } catch (error) {
       console.error("Error updating README content:", error);
       setErrorMessage("Failed to update README content. Please try again.");
@@ -155,6 +163,7 @@ const HomePage = () => {
             </div>
             <div>
               <button
+                className="no-hover"
                 onClick={handleSave}
                 disabled={!isContentChanged}
                 style={{
@@ -171,6 +180,19 @@ const HomePage = () => {
               >
                 Save
               </button>
+              {showSaveSuccess && (
+                <div style={{
+                  color: '#2E7D32',
+                  backgroundColor: '#E8F5E9',
+                  padding: '8px 16px',
+                  borderRadius: '4px',
+                  marginLeft: '10px',
+                  display: 'inline-block',
+                  animation: 'fadeIn 0.3s ease-in'
+                }}>
+                  Changes saved successfully!
+                </div>
+              )}
             </div>
           </div>
           <div className="split-container">
