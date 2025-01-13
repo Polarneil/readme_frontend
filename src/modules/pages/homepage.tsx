@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import { createRepoRequest, createReadMeFile, fetchReadMeFiles, updateReadMeFile } from "../common/data/apiService";
-import CopyIcon from '@mui/icons-material/ContentCopy'; 
+import CopyIcon from '@mui/icons-material/ContentCopy';
 import '../app/app.component.css';
-import BootstrapTooltip from "../common/tooltip";
+import { BootstrapTooltip, HtmlTooltip } from "../common/tooltip";
+import InfoIcon from '@mui/icons-material/Info';
+import Typography from '@mui/material/Typography';
+
 
 const HomePage = () => {
   const [newRepoUrl, setNewRepoUrl] = useState<string>("");
@@ -77,7 +80,7 @@ const HomePage = () => {
       const updatedReadMe = await updateReadMeFile(newReadMeKey, editorContent);
       setReadMeContent(updatedReadMe.content);
       setShowSaveSuccess(true);
-      
+
       // Hide success message after 3 seconds
       setTimeout(() => {
         setShowSaveSuccess(false);
@@ -105,7 +108,7 @@ const HomePage = () => {
   return (
     <div className="homepage">
       {readMeContent && (
-        <button onClick={() => setShowForms(!showForms)}>
+        <button className="show-hide-input" onClick={() => setShowForms(!showForms)}>
           {showForms ? "Hide Input Forms" : "Show Input Forms"}
         </button>
       )}
@@ -116,13 +119,14 @@ const HomePage = () => {
               <h2>Enter GitHub Repo URL</h2>
               <form className="form-subcontainer" onSubmit={handleSubmit}>
                 <input
+                  className="input-box"
                   type="text"
                   value={newRepoUrl}
                   onChange={(e) => setNewRepoUrl(e.target.value)}
                   placeholder="Enter repo URL"
                   required
                 />
-                <button type="submit">Generate README</button>
+                <button className="show-hide-input" type="submit">Generate README</button>
               </form>
             </section>
           ) : (
@@ -130,18 +134,19 @@ const HomePage = () => {
               <h2>Enter README Key</h2>
               <form className="form-subcontainer" onSubmit={handleKeySubmit}>
                 <input
+                  className="input-box"
                   type="text"
                   value={readmeKey}
                   onChange={(e) => setReadmeKey(e.target.value)}
                   placeholder="Enter README Key"
                   required
                 />
-                <button type="submit">Fetch README</button>
+                <button className="show-hide-input" type="submit">Fetch README</button>
               </form>
             </section>
           )}
           <p className="or-spacer">OR</p>
-          <button onClick={() => setShowUrlForm(!showUrlForm)}>
+          <button className="show-hide-input" onClick={() => setShowUrlForm(!showUrlForm)}>
             {showUrlForm ? "Use Key" : "Use URL"}
           </button>
           {errorMessage && <p className="error">{errorMessage}</p>}
@@ -155,6 +160,18 @@ const HomePage = () => {
       {readMeContent && !isLoading && (
         <section>
           <div className="token-box-container">
+            <HtmlTooltip title={
+              <React.Fragment>
+                <Typography color="inherit" fontWeight={"bold"}>This is your unique access key.</Typography><br></br>
+                It allows you to retrieve the generated README later without needing an account. <u>Keep it safe!</u> If you lose this key, you will <b><u>NOT</u></b> be able to access your README again.
+              </React.Fragment>}>
+              <InfoIcon
+                color="inherit"
+                sx={{
+                  marginTop: '25px',
+                  marginRight: '-5px'
+                }}></InfoIcon>
+            </HtmlTooltip>
             <div className="token-box">
               {newReadMeKey}
               <BootstrapTooltip title={tooltipText} arrow>
@@ -162,24 +179,26 @@ const HomePage = () => {
               </BootstrapTooltip>
             </div>
             <div>
-              <button
-                className="no-hover"
-                onClick={handleSave}
-                disabled={!isContentChanged}
-                style={{
-                  cursor: isContentChanged ? 'pointer' : 'not-allowed',
-                  display: 'inline-block',
-                  backgroundColor: '#F6F8FA',
-                  padding: '10px',
-                  borderRadius: '8px',
-                  border: '2px solid #D0D9E0',
-                  boxShadow: '0 4px 12px 0 rgba(0,0,0,0.1)',
-                  marginTop: '15px',
-                  color: isContentChanged ? 'black' : 'gray',
-                }}
-              >
-                Save
-              </button>
+              <BootstrapTooltip title={isContentChanged ? 'Save changes' : 'Edit before saving'}>
+                <button
+                  className="no-hover"
+                  onClick={handleSave}
+                  disabled={!isContentChanged}
+                  style={{
+                    cursor: isContentChanged ? 'pointer' : 'not-allowed',
+                    display: 'inline-block',
+                    backgroundColor: '#F6F8FA',
+                    padding: '10px',
+                    borderRadius: '8px',
+                    border: '2px solid #D0D9E0',
+                    boxShadow: '0 4px 12px 0 rgba(0,0,0,0.1)',
+                    marginTop: '15px',
+                    color: isContentChanged ? 'black' : 'gray',
+                  }}
+                >
+                  Save
+                </button>
+              </BootstrapTooltip>
               {showSaveSuccess && (
                 <div style={{
                   color: '#2E7D32',
