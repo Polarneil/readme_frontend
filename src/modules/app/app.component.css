@@ -1,8 +1,9 @@
 .homepage {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;  /* Align items to the left */
+  justify-content: flex-start;  /* Align content to the top */
+  padding-left: 20px;  /* Optional: Add space from the left edge */
   transition: all 0.3s ease;
 }
 
@@ -15,6 +16,7 @@
   border-radius: 8px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  margin-top: 10px;
 }
 
 .form-subcontainer {
@@ -67,12 +69,30 @@ input:focus {
   margin: 0px;
 }
 
+.token-box-container {
+  display: flex;
+  gap: 20px;
+}
+
 .token-box {
   display: inline-block;
   background-color: #F6F8FA;
   padding: 10px 0px 10px 10px; 
   border-radius: 8px;
   border: 2px solid #D0D9E0;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 15px;
+}
+
+.save-button {
+  cursor: pointer;
+  display: inline-block;
+  background-color: #F6F8FA;
+  padding: 10px; 
+  border-radius: 8px;
+  border: 2px solid #D0D9E0;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: 15px;
 }
 
 .copy-icon {

@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import { createRepoRequest, createReadMeFile, fetchReadMeFiles } from "../common/data/apiService";
 import CopyIcon from '@mui/icons-material/ContentCopy'; import '../app/app.component.css';
 import BootstrapTooltip from "../common/tooltip";
+import { Button } from "@mui/material";
 
 
 const HomePage = () => {
@@ -126,11 +127,16 @@ const HomePage = () => {
 
       {readMeContent && !isLoading && (
         <section>
-          <div className="token-box">
-            {newReadMeKey}
-            <BootstrapTooltip title={tooltipText} arrow>
-              <span className="copy-icon"><CopyIcon onClick={() => copyToClipboard(newReadMeKey)} fontSize="small" /></span>
-            </BootstrapTooltip>
+          <div className="token-box-container">
+            <div className="token-box">
+              {newReadMeKey}
+              <BootstrapTooltip title={tooltipText} arrow>
+                <span className="copy-icon" onClick={() => copyToClipboard(newReadMeKey)}><CopyIcon fontSize="small" /></span>
+              </BootstrapTooltip>
+            </div>
+            <div className="save-button">
+              Save
+            </div>
           </div>
           <div className="split-container">
             <div className="editor-container">

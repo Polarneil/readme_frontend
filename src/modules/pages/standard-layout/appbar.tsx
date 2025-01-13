@@ -14,12 +14,13 @@ export default function CustomAppBar() {
       >
         <Toolbar>
           <Typography 
-            variant="h6" 
+            variant="h5" 
             sx={{ 
               flexGrow: 1,
               fontFamily: "'Share Tech Mono', monospace",
               fontWeight: 700,
               color: '#23FF12',
+              marginLeft: '30px'
             }}
           >
             README.ai
