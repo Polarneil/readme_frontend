@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiUrl = process.env.REACT_APP_DJANGO_API_URL;
+const apiUrl = process.env.REACT_APP_DJANGO_API_URL || 'https://api-readme.chatbotttt.com';
 
 // Get Repo Requests
 export const fetchRepoRequests = async () => {
